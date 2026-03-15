@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: insuretech-metrics
+  labels:
+    app: insuretech
+spec:
+  selector:
+    app: insuretech
+  ports:
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: insuretech-sm
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: insuretech
+  namespaceSelector:
+    matchNames:
+      - default   
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
